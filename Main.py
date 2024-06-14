@@ -33,10 +33,49 @@ def login(username, password):
         password_field.send_keys(password)
         print("Campo de contraseña encontrado y contraseña ingresada")
         
-        # Presiona el botón de iniciar sesión
-        sign_in_button = driver.find_element(By.ID, 'idSIButton9')
+        # Espera hasta que el botón de iniciar sesión sea clicable y luego haz clic
+        sign_in_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.ID, 'idSIButton9'))
+        )
         sign_in_button.click()
         print("Botón de iniciar sesión clicado con éxito")
+        
+        # Espera hasta que el campo para el código 2FA esté presente
+        code_field = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'idTxtBx_SAOTCC_OTC'))
+        )
+        print("Campo de código 2FA encontrado")
+
+        # Solicita al usuario que ingrese el código 2FA manualmente
+        code = input("Ingrese el código de autenticación de dos factores (2FA): ")
+        code_field.send_keys(code)
+        print("Código 2FA ingresado")
+
+        # Espera hasta que el botón de verificación sea clicable y luego haz clic
+        verify_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.ID, 'idSubmit_SAOTCC_Continue'))
+        )
+        verify_button.click()
+        print("Botón de verificar clicado con éxito")
+
+        # Ahora esperamos a que aparezca la opción de mantener sesión iniciada
+        kmsi_checkbox = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'KmsiCheckboxField'))
+        )
+        kmsi_checkbox.click()
+        print("Opción de mantener sesión iniciada marcada")
+        
+        # Presiona el botón de continuar después de marcar la opción
+        continue_button = driver.find_element(By.ID, 'idSIButton9')
+        continue_button.click()
+        print("Botón de continuar clicado con éxito después de marcar la opción")
+        
+        # Espera a que el botón "Sí" esté presente y haz clic en él
+        yes_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'idSIButton9'))
+        )
+        yes_button.click()
+        print("Botón 'Sí' clicado con éxito")
         
         print("Login realizado con éxito")
     except Exception as e:
